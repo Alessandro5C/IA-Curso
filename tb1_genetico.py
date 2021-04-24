@@ -1,21 +1,18 @@
-import numpy
-import random
+import numpy, random, pygame
 import tb1_game as gtp
-import pygame
-import time
 import tb1_funciones as f
 
 class Genetico():
 	def __init__(self, Tiempos, Muestra, nKeys, Probabilidad):
 		self.Individuos={}
-		self.Objetivos= [] 
-		self.T=Tiempos
-		self.M=Muestra
-		self.nKeys=nKeys
-		self.N=len(f.get_states(self.nKeys))
-		self.P=Probabilidad
+		self.T=Tiempos #Tamaño del ADN
+		self.M=Muestra #Número de muestras de ADN
+		self.nKeys=nKeys #Número de columnas
+		self.N=len(f.get_states(self.nKeys)) #Número de genes posibles
+		self.P=Probabilidad #Probabilidad de mutación genética
 		self.gen=0
 		self.last=0
+		self.Objetivos= [] 
 
 	def Parejas(self):
 		Aleatorio = random.sample(range(int(self.M/2),self.M),int(self.M/2))
@@ -26,15 +23,11 @@ class Genetico():
 		return Pareja	
 
 	def Inicializacion(self):
-		# global Individuos
-		# global Mejor
-		# Individuos = {}
-		# global Objetivos
-		# Objetivos = []
-		self.Objetivos = numpy.random.choice(range(0,self.N),self.T,replace=True)
+		self.Objetivos = numpy.random.choice(\
+			range(0,self.N),self.T,replace=True)
 		for i in range(self.M):
-			self.Individuos[i] = numpy.random.choice(range(0,self.N),self.T,replace=True)
-		
+			self.Individuos[i] = numpy.random.choice(\
+				range(0,self.N),self.T,replace=True)		
 		print('---Inicializacion----')
 		self.Mostrar()
 		
@@ -43,12 +36,15 @@ class Genetico():
 		Pareja = self.Parejas()
 		print('Parejas',Pareja)
 		for k,v in Pareja.items():
-			if self.Idoneidad(self.Individuos[k], self.Objetivos) >= self.Idoneidad(self.Individuos[v], self.Objetivos):
+			if self.Idoneidad(self.Individuos[k], self.Objetivos)\
+				 >= self.Idoneidad(self.Individuos[v], self.Objetivos):
 				self.Individuos[v] = self.Individuos[k]
 		self.Mostrar()
 
 	def Idoneidad(self, SerieDeEstados, SerieDeObj, GUI=False):
-		#print("TIPO DE DATO", type(SerieDeEstados))
+		#El valor de la idoneidad se calcula en base al resultado 
+		#	obtenido en el juego, el cual aumenta puntos cada vez
+		#	que se atine la Nota correcta
 		auxGame = gtp.Logica(SerieDeEstados, SerieDeObj, self.nKeys)
 		if GUI:
 			if self.gen==0:
@@ -57,9 +53,7 @@ class Genetico():
 				return auxGame.play(True, self.gen)
 			else:
 				return auxGame.play(False, self.gen)
-			#msg pon GEN EN LA PARTE SUPERIOR
-		# auxGame = display()
-		pygame.display.set_caption(f'GENERATION: {self.gen} | SCORE: X')
+		pygame.display.set_caption(f'GEN: {self.gen} | SCORE: X')
 		return auxGame.getJustResult()
 
 	def Cruce(self):
@@ -97,39 +91,19 @@ class Genetico():
 			gen_not_to_choose = self.Individuos[ElegirI][ElegirPos]
 			possible_gen = list(range(0, gen_not_to_choose))
 			possible_gen.extend(range(gen_not_to_choose+1, self.N))
-
+			#Se excluye entre las posibles genes a aquel gen que ya se encontraba ahí
 			ElegirGen = numpy.random.choice(possible_gen)
-			#El gen elegido no puede ser el mismo que ya estaba en Individuos[ElegirI][ElegirPos]
 			print(ElegirGen)
 			self.Individuos[ElegirI][ElegirPos] = ElegirGen
 			print("****")
 		self.Mostrar()
 
+	#Muestra las cadenas de ADN y su Idoneidad
 	def Mostrar(self, GUI=False):
 		for i in range(self.M):
 			if not GUI:
-				print(self.Individuos[i],'f(x)=', self.Idoneidad(self.Individuos[i], self.Objetivos))
+				print(self.Individuos[i],'f(x)=', \
+					self.Idoneidad(self.Individuos[i], self.Objetivos))
 			else:
-				print(self.Individuos[i],'f(x)=', self.Idoneidad(self.Individuos[i], self.Objetivos, True))
-
-# Tiempos = 12
-# Muestra = 2
-
-# NKeys = 4
-# NEstados = 15 #len(f.get_states(NKeys))
-# Probabilidad = 15
-
-# pygame.init()
-# Inicializacion(Muestra, NEstados, Tiempos)
-# #Añadido
-# for e in range(1):
-# 	print(f'GEN: {e+1}')
-# 	if e > 0:
-# 		Mutacion(Muestra, NEstados, Probabilidad, Tiempos)
-# 	Seleccion(Muestra, Tiempos)
-# 	Cruce(Muestra, Tiempos)
-
-# print(Objetivos)
-# pygame.quit()
-# print("ADIOSSS")
-	
+				print(self.Individuos[i],'f(x)=', \
+					self.Idoneidad(self.Individuos[i], self.Objetivos, True))

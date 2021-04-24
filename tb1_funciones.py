@@ -15,12 +15,13 @@ def comb(n, m, info, nr, vec, ans):
 def get_comb(n, m):
     ans = []
     vec = [i for i in range(m)]
-    info = [None]*(n+1) #El ultimo None no se usa pero es para evitar error
+    info = [None]*(n+1)
     for i in range(m):
         info[0] = i
         comb(n, m, info, 0, vec, ans)
     return ans
 
+#Obtener las combinaciones para diferentes grupos
 def get_states(m):
 	aux = []
 	for i in range(1, m+1):
