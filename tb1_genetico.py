@@ -4,15 +4,15 @@ import tb1_funciones as f
 
 class Genetico():
 	def __init__(self, Tiempos, Muestra, nKeys, Probabilidad):
-		self.Individuos={}
+		self.Individuos={} #Almacena el conjunto de muestras
 		self.T=Tiempos #Tamaño del ADN
 		self.M=Muestra #Número de muestras de ADN
 		self.nKeys=nKeys #Número de columnas
 		self.N=len(f.get_states(self.nKeys)) #Número de genes posibles
 		self.P=Probabilidad #Probabilidad de mutación genética
-		self.gen=0
-		self.last=0
-		self.Objetivos= [] 
+		self.gen=0 #Número de generación
+		self.last=0 #Número de la última generación
+		self.Objetivos= [] #Almacena la serie de teclas negras que irán apareciendo
 
 	def Parejas(self):
 		Aleatorio = random.sample(range(int(self.M/2),self.M),int(self.M/2))
@@ -23,8 +23,10 @@ class Genetico():
 		return Pareja	
 
 	def Inicializacion(self):
+		#Generación aleatoria de las posiciones de las teclas negras
 		self.Objetivos = numpy.random.choice(\
 			range(0,self.N),self.T,replace=True)
+		#Inicialización de las muestras
 		for i in range(self.M):
 			self.Individuos[i] = numpy.random.choice(\
 				range(0,self.N),self.T,replace=True)		
@@ -40,11 +42,13 @@ class Genetico():
 				 >= self.Idoneidad(self.Individuos[v], self.Objetivos):
 				self.Individuos[v] = self.Individuos[k]
 		self.Mostrar()
-
+	
+	#SerieDeEstados es la lista de series de teclas que se presionarán
+	#SerieDeObj es lista de series de taclas negras que aparecerán en el juego
 	def Idoneidad(self, SerieDeEstados, SerieDeObj, GUI=False):
 		#El valor de la idoneidad se calcula en base al resultado 
 		#	obtenido en el juego, el cual aumenta puntos cada vez
-		#	que se atine la Nota correcta
+		#	que se atine completamente a la serie de teclas negras
 		auxGame = gtp.Logica(SerieDeEstados, SerieDeObj, self.nKeys)
 		if GUI:
 			if self.gen==0:
@@ -77,7 +81,7 @@ class Genetico():
 				self.Individuos[v] = Hijo2
 			item = item+1
 		self.Mostrar(True)
-
+	
 	def Mutacion(self):
 		print('-----Mutacion ----')
 		for _i in range(int(self.N/2)):
