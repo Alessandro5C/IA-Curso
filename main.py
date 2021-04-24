@@ -1,38 +1,40 @@
 import tb1_genetico
 import pygame
-
-def load_sound(name):
-    if not pygame.mixer or not pygame.mixer.get_init():
-        pass
-    try:
-        sound = pygame.mixer.Sound(name)
-    except pygame.error:
-        print ('Cannot load sound: %s' % name)
-        raise SystemExit(str(geterror()))
-    return sound
+import time 
+# def load_sound(name):
+#     if not pygame.mixer or not pygame.mixer.get_init():
+#         pass
+#     try:
+#         sound = pygame.mixer.Sound(name)
+#     except pygame.error:
+#         print ('Cannot load sound: %s' % name)
+#     	#raise SystemExit(str(geterror()))
+#     return sound
 
 if __name__=="__main__":
 	algorithm = tb1_genetico.Genetico(Tiempos=12,\
 		Muestra=4, nKeys=4, Probabilidad=15)
+	algorithm.last=300
 	pygame.init()
 
-	#pygame.mixer.get_init()
-	#mutrue=load_sound("punch.wav")
-	#mufall= load_sound("boom.wav")
-	#pygame.mixer.music.load("a.mp3")
-	#pygame.mixer.music.play(-1)
+	pygame.mixer.init()
+	# music=load_sound("music.wav")
+	pygame.mixer.music.load("resources/music.wav")
+	pygame.mixer.music.play(-1)
 
+	# music = pygame.mixer.Sound("music.wav")
+	# music.set_volume(0)
 	algorithm.Inicializacion()
-	for gen in range(300):
+	# music.play()
+	for gen in range(algorithm.last):
+		pygame.mixer.music.rewind()
 		algorithm.gen=gen
-		#msg en GEN:
-		            # if lost==0:mutrue.play()
-                    # else :mufall.play()
+		# pygame.mixer.unpause()
 		if gen > 0:
 			algorithm.Mutacion()
 		algorithm.Seleccion()
 		algorithm.Cruce()
-		# pygame.display.set_caption(f'GENERATION: {gen}')
+		pygame.mixer.pause()
 	print(algorithm.Objetivos)
 	#pygame.mixer.music.stop()
 	pygame.quit()

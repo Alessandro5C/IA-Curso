@@ -15,6 +15,7 @@ class Genetico():
 		self.N=len(f.get_states(self.nKeys))
 		self.P=Probabilidad
 		self.gen=0
+		self.last=0
 
 	def Parejas(self):
 		Aleatorio = random.sample(range(int(self.M/2),self.M),int(self.M/2))
@@ -42,7 +43,7 @@ class Genetico():
 		Pareja = self.Parejas()
 		print('Parejas',Pareja)
 		for k,v in Pareja.items():
-			if self.Idoneidad(self.Individuos[k], self.Objetivos, True) >= self.Idoneidad(self.Individuos[v], self.Objetivos):
+			if self.Idoneidad(self.Individuos[k], self.Objetivos) >= self.Idoneidad(self.Individuos[v], self.Objetivos):
 				self.Individuos[v] = self.Individuos[k]
 		self.Mostrar()
 
@@ -51,15 +52,14 @@ class Genetico():
 		auxGame = gtp.Logica(SerieDeEstados, SerieDeObj, self.nKeys)
 		if GUI:
 			if self.gen==0:
-				print('-------------------------------------------entre 0')
-				auxGame.play(True, self.gen)
-			elif self.gen==299:
-				print('----------------------------------------------------------------------------------------entras??')
-				auxGame.play(True, self.gen)
+				return auxGame.play(True, self.gen)
+			elif self.gen==self.last-1:
+				return auxGame.play(True, self.gen)
 			else:
-				auxGame.play(False, self.gen)
+				return auxGame.play(False, self.gen)
 			#msg pon GEN EN LA PARTE SUPERIOR
 		# auxGame = display()
+		pygame.display.set_caption(f'GENERATION: {self.gen} | SCORE: X')
 		return auxGame.getJustResult()
 
 	def Cruce(self):
@@ -82,7 +82,7 @@ class Genetico():
 				self.Individuos[k] = Hijo1
 				self.Individuos[v] = Hijo2
 			item = item+1
-		self.Mostrar()
+		self.Mostrar(True)
 
 	def Mutacion(self):
 		print('-----Mutacion ----')
@@ -105,9 +105,12 @@ class Genetico():
 			print("****")
 		self.Mostrar()
 
-	def Mostrar(self):
+	def Mostrar(self, GUI=False):
 		for i in range(self.M):
-			print(self.Individuos[i],'f(x)=' , self.Idoneidad(self.Individuos[i], self.Objetivos))
+			if not GUI:
+				print(self.Individuos[i],'f(x)=', self.Idoneidad(self.Individuos[i], self.Objetivos))
+			else:
+				print(self.Individuos[i],'f(x)=', self.Idoneidad(self.Individuos[i], self.Objetivos, True))
 
 # Tiempos = 12
 # Muestra = 2

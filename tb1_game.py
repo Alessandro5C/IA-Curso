@@ -3,6 +3,18 @@ import pygame,os,random
 import tb1_funciones as f
 import time
 
+# def load_sound(name):
+#     if not pygame.mixer or not pygame.mixer.get_init():
+#         pass
+#     try:
+#         sound = pygame.mixer.Sound(name)
+#     except pygame.error:
+#         print ('Cannot load sound: %s' % name)
+#         #raise SystemExit(str(geterror()))
+#    return sound
+
+# wrong= load_sound("wrong.wav")
+
 class Logica():
 	def __init__(self, SerieDeMovimientos, SerieDeObjetivos, nKeys):
 		self.__nCol=10
@@ -76,13 +88,28 @@ class Logica():
 				if pressed:
 					score += 1 
 					pygame.display.set_caption(f'GENERATION: {gen} | SCORE: {score}')
+					# pygame.mixer.unpause()
+					# pygame.mixer.music.unpause()
+				else:
+					if with_delay:
+						wrong = pygame.mixer.Sound("resources/wrong.wav")
+						wrong.play()
+					# pygame.mixer.pause()
+					# score=score
+					# pygame.mixer.music.pause()
+						# pygame.mixer.init()
+						# wrong.set_volume(0.5)
+						# pygame.mixer.pause()
+					#nose si hay q parar
+					# pygame.mixer.wrong.set_volume(0.3)
 				self.printPressedOnCanvas(j-self.__nCol, pressed)
 				#if presed = False :::: aqui musica mal hecha
 				# self.pantalla.click(j-10, pressed)
 			pygame.display.update()
 			if with_delay:
-				time.sleep(0.10)
+				time.sleep(0.15)
 			self.notesHeight()
+		return score
 
 
 class key_properties():
