@@ -23,8 +23,8 @@ class Logica():
 		return self.score
 	
 	#Asociar un estado con una serie de notas
-	#	eg. Estado 3 -> PosNota: Solo 3
-	#	eg. Estado 4 -> PosNota: 0 y 1
+	#	eg. (Estado 3) Serie de teclas número 3 -> Posición de la tecla negra: Solo 3
+	#	eg. (Estado 4) Serie de teclas número 4 -> Posición de la tecla negra: 0 y 1
 	def associate(self):
 		aux = f.get_states(self.nKeys)
 		for i in range(len(aux)):
@@ -34,27 +34,27 @@ class Logica():
 		for i in range(len(self.ObjSeries)):
 			self.HeightObjSeries[i]=-i
 
-	#Actualiza la altura de las Notas negras
+	#Actualiza la altura de las teclas negras
 	def notesHeight(self):
 		for i in range(len(self.ObjSeries)):
 			self.HeightObjSeries[i]+=1
 
-	#Convierte un Estado a una serie de Notas e
-	#	imprime Nota negra en el canvas/ventana
+	#Convierte un Estado a una serie de teclas negras e
+	#	imprime tecla negra en el canvas/ventana
 	def printOnCanvas(self, h, i):
 		list_to_print = self.states[self.ObjSeries[i]]
 		for e in list_to_print:
 			self.pantalla.printKey(h, e)
 
-	#Convierte un Estado a una serie de Notas e
-	#Imprime Nota presionada en el canvas/ventana
+	#Convierte un Estado a una serie de teclas e
+	#	imprime la tecla presionada en el canvas/ventana
 	def printPressedOnCanvas(self, i, pressed):
 		list_to_print = self.states[self.MovSeries[i]]
 		for e in list_to_print:
 			self.pantalla.printPressed(pressed, e)
 
 	#Indica la posición (altura y columna)
-	#	en la cual se debe dibujar cada Nota negra
+	#	en la cual se debe dibujar cada tecla negra
 	def printOn(self):
 		for i in range(len(self.ObjSeries)):
 			h = self.HeightObjSeries[i]
@@ -67,11 +67,14 @@ class Logica():
 	def play(self, with_delay:bool, gen:int):
 		self.associate()
 		score = 0
+		#Mientras exista teclas negras
 		for i in range(self.nTiempos+self.__nFil):
 			self.pantalla.screen.fill((224,224,255))
 			self.printOn()
+			#Imprimir el color de la tecla presiona (Rojo-> Incorrecto & Verde-> Correcto)
 			if i>=self.__nFil:
 				pressed = (self.MovSeries[i-self.__nFil] == self.ObjSeries[i-self.__nFil])
+				#Si se presiono correctamente aumenta puntaje, sino reproduce un sonido
 				if pressed:
 					score += 1 
 					pygame.display.set_caption(f'GEN: {gen} | SCORE: {score}')
@@ -86,7 +89,7 @@ class Logica():
 			self.notesHeight()
 		return score
 
-#Clase que representa a la Nota
+#Clase que representa a la tecla
 #	sea negra o presionada 
 class key_properties():
 	def __init__(self, witdh, height):
