@@ -1,10 +1,10 @@
-import pygame #, os
+import pygame
 import tb1_funciones as f
 import time
 
 class Logica():
 	def __init__(self, SerieDeMovimientos, SerieDeObjetivos, nKeys):
-		self.__nCol=10
+		self.__nFil=10
 		self.nKeys=nKeys
 		self.MovSeries=SerieDeMovimientos
 		self.ObjSeries=SerieDeObjetivos
@@ -59,7 +59,7 @@ class Logica():
 		for i in range(len(self.ObjSeries)):
 			h = self.HeightObjSeries[i]
 			if not (h<0):
-				if (h>=self.__nCol):
+				if (h>=self.__nFil):
 					continue
 				self.printOnCanvas(h, i)
 
@@ -67,11 +67,11 @@ class Logica():
 	def play(self, with_delay:bool, gen:int):
 		self.associate()
 		score = 0
-		for j in range(self.nTiempos+self.__nCol):
+		for i in range(self.nTiempos+self.__nFil):
 			self.pantalla.screen.fill((224,224,255))
 			self.printOn()
-			if j>=self.__nCol:
-				pressed = (self.MovSeries[j-self.__nCol] == self.ObjSeries[j-self.__nCol])
+			if i>=self.__nFil:
+				pressed = (self.MovSeries[i-self.__nFil] == self.ObjSeries[i-self.__nFil])
 				if pressed:
 					score += 1 
 					pygame.display.set_caption(f'GEN: {gen} | SCORE: {score}')
@@ -79,7 +79,7 @@ class Logica():
 					if with_delay:
 						wrong = pygame.mixer.Sound("resources/wrong.wav")
 						wrong.play()
-				self.printPressedOnCanvas(j-self.__nCol, pressed)
+				self.printPressedOnCanvas(i-self.__nFil, pressed)
 			pygame.display.update()
 			if with_delay:
 				time.sleep(0.15)
@@ -99,7 +99,7 @@ class key_properties():
 		return col*witdh//self.__nCol
 	
 	def __to_y(self, fil, height):
-		return fil*height//self.__nFil
+		return (fil-1)*height//self.__nFil
 
 	def drawKey(self, screen, witdh, height, i, j):
 		x, y = self.__to_x(j, witdh), self.__to_y(i, height)
@@ -107,7 +107,7 @@ class key_properties():
 
 	def drawPressed(self, screen, witdh, height, j, rgb):
 		x = self.__to_x(j,witdh)
-		pygame.draw.rect(screen, rgb, [x, self.__to_y(9,height), self.__w, self.__h])
+		pygame.draw.rect(screen, rgb, [x, self.__to_y(self.__nFil,height), self.__w, self.__h])
 
 #Clase que representa la ventana y su canvas
 class display():
